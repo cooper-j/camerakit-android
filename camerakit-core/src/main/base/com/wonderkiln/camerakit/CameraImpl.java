@@ -37,6 +37,9 @@ abstract class CameraImpl {
     abstract void setFocusArea(float x, float y);
 
     abstract void captureImage(ImageCapturedCallback callback);
+
+    abstract void setVideoFile(File outputFile);
+
     interface ImageCapturedCallback {
         void imageCaptured(byte[] jpeg);
     }

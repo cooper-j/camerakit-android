@@ -80,6 +80,8 @@ public class Camera1 extends CameraImpl {
 
     private boolean mLockVideoAspectRatio;
 
+    private File mOutputFile;
+
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private Handler mHandler = new Handler();
     private FrameProcessingRunnable mFrameProcessor;
@@ -286,7 +288,7 @@ public class Camera1 extends CameraImpl {
             if (zoomFactor <= 1) {
                 mZoom = 1;
             } else {
-                mZoom= zoomFactor;
+                mZoom = zoomFactor;
             }
 
             if (mCameraParameters != null && mCameraParameters.isZoomSupported()) {
@@ -949,17 +951,24 @@ public class Camera1 extends CameraImpl {
         }
     }
 
+    @Override
+    public void setVideoFile(File outputFile) {
+        mOutputFile = outputFile;
+    }
+
     private File getVideoFile() {
+        if (mOutputFile != null) {
+            return (!mOutputFile.getParentFile().exists() && !mOutputFile.mkdirs()) ? null : mOutputFile;
+        }
+
         if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
             return null;
         }
 
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "Camera");
 
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            return null;
         }
 
         return new File(mediaStorageDir.getPath() + File.separator + "video.mp4");
